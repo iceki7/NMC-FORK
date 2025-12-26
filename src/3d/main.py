@@ -10,6 +10,14 @@ import matplotlib.pyplot as plt
 import json
 import gpytoolbox
 import torch
+import random
+
+seed=1234
+random.seed(seed)
+np.random.seed(seed)
+torch.manual_seed(seed)
+torch.cuda.manual_seed(seed)
+torch.cuda.manual_seed_all(seed)
 
 # Read obj with lines
 # def read_obj(filename, d2=True):

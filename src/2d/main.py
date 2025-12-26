@@ -10,8 +10,18 @@ import matplotlib.pyplot as plt
 import json
 import gpytoolbox
 import torch
+import random
 
 torch.cuda.empty_cache()
+
+seed=1234
+random.seed(seed)
+np.random.seed(seed)
+torch.manual_seed(seed)
+torch.cuda.manual_seed(seed)
+torch.cuda.manual_seed_all(seed)
+# torch.use_deterministic_algorithms(True)
+
 
 # Read obj with lines
 def read_obj(filename, d2=True):
@@ -112,6 +122,7 @@ if cfg.src == 'jpipe':
 # load checkpoints
 if cfg.ckpt > 0:
     fluid.load_ckpt(cfg.ckpt)
+    print('[zxc Load CKPT]')
 else:
     source_func = get_source_velocity(cfg.src, cfg.src_start_frame)
     if cfg.src == 'karman':
@@ -171,7 +182,7 @@ for t in range(cfg.n_timesteps):
         fluid.add_source('velocity', source_func, is_init=False)
 
     # time-stepping
-    print("timestep:", fluid.timestep)
+    print("[timestep]\t"+str( fluid.timestep) +"########################################")
     fluid.step()
 
     # save visualization
