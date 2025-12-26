@@ -4,13 +4,19 @@
 import numpy as np
 from matplotlib import pyplot as plt
 from matplotlib.colors import Normalize
+from tqdm import tqdm
+
+veldir = r"C:\Users\123\Desktop\TEMP\\"
+NX = 18
 
 def draw_stream(x,y,myu,myv,tempcnt,sampleRate=1):
     assert(len(x.shape)==2)
     assert(x.shape==y.shape)
     assert(y.shape==myu.shape)
     assert(myu.shape==myv.shape)
-    # ----------------optional -----interpolate -----------------------------
+
+    # ----------------作者产生的数据理论上就是规则网格，这里再次处理一下
+    # ------------------------optional  interpolate -----------------------------
     from scipy.interpolate import griddata
     points = np.column_stack([x.flatten(), y.flatten()])
     values_u = myu.flatten()
@@ -43,7 +49,7 @@ def draw_stream(x,y,myu,myv,tempcnt,sampleRate=1):
     plt.gca().set_aspect('equal')
     plt.axis('equal')
 
-    # ---------------------interpolate -----------------------------
+    # ---------------------interpolate -------------------------------------------
 
 
 
@@ -83,33 +89,31 @@ def draw_stream(x,y,myu,myv,tempcnt,sampleRate=1):
     plt.title('Velocity Streamplot')
     plt.colorbar(label='Speed')
     plt.tight_layout()
-    plt.savefig("zxcstream-"+str(tempcnt)+".png", bbox_inches='tight',dpi=300)
+    plt.savefig(veldir+"\zxcstream\zxc--"+str(tempcnt)+".png", bbox_inches='tight',dpi=300)
 
 
 
 
-res = int( 1000 )+2
-for i in range(120,125):
+for i in tqdm(range(120,125)):
     print(i)
-  
-
-    
+      
     try:
-        samples_v = np.loadtxt(r"C:\Users\123\Desktop\TEMP\velocity_samples_t{0:03}.txt".format(i))
-        values_v = np.loadtxt(r"C:\Users\123\Desktop\TEMP\velocity_values_t{0:03}.txt".format(i))
+        samples_v = np.loadtxt(veldir + r"velocity_samples_t{0:03}.txt".format(i))
+        values_v =  np.loadtxt(veldir + r"velocity_values_t{0:03}.txt".format(i))
 
     except:
         break
     
     print(values_v.shape)
     print(samples_v.shape)
-    values_v= values_v.reshape((18,909,2))
-    samples_v= samples_v.reshape((18,909,2))
+    samplenum = values_v.shape[0]
+    values_v = values_v.reshape ((NX, int(samplenum/NX), 2))
+    samples_v= samples_v.reshape((NX, int(samplenum/NX), 2))
 
     x = samples_v[:,:,0]
-    y= samples_v[:,:,1]
-    myu= values_v[:,:,0]
-    myv=values_v[:,:,1]
+    y = samples_v[:,:,1]
+    myu = values_v[:,:,0]
+    myv = values_v[:,:,1]
 
     draw_stream(x,y,myu,myv,i)
     plt.close()
