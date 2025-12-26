@@ -8,6 +8,10 @@ from tqdm import tqdm
 
 veldir = r"C:\Users\123\Desktop\TEMP\\"
 NX = 18
+VMIN = 0.0
+VMAX = 0.7
+
+
 
 def draw_stream(x,y,myu,myv,tempcnt,sampleRate=1):
     assert(len(x.shape)==2)
@@ -35,7 +39,7 @@ def draw_stream(x,y,myu,myv,tempcnt,sampleRate=1):
     print(u_grid.shape)
     print(v_grid.shape)
 
-    norm = Normalize(vmin=0.0, vmax=0.7)
+    norm = Normalize(vmin=VMIN, vmax=VMAX)
     
     fig = plt.streamplot(
         Xg,Yg,u_grid,v_grid,
