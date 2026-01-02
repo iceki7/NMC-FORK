@@ -8,6 +8,7 @@ from functools import partial
 from utils.vis_utils import draw_scalar_field2D, save_figure, frames2gif, draw_vector_field2D
 from scipy.ndimage import map_coordinates
 import matplotlib.pyplot as plt
+from utils.prms import *
 
 # Read obj with lines
 def read_obj(filename, d2=True):
@@ -115,6 +116,9 @@ error = []
 for t in tqdm(range(cfg.max_n_iters)):
     fluid.load_ckpt(t)
     with torch.no_grad():
+        if(bCoordTranslation):
+            grid_coords_torch = grid_coords_torch + torch.Tensor([translationX, translationY]).cuda()
+
         grid_vel = fluid.velocity_field(grid_coords_torch).detach().cpu().numpy()
 
     fig = draw_scalar_field2D(d_grid, to_array=False, vmin=None, vmax=None, cmap='Blues', colorbar=True)

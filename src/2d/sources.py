@@ -56,7 +56,7 @@ def liddriven_velocity(samples: torch.FloatTensor, scene_size=None):
 
 def karman_vortex_velocity(samples: torch.FloatTensor, karman_vel, obs_func, scene_size, eps):
     vel = torch.zeros_like(samples)
-    print('[init vel] ',vel.shape)
+    # print('[init vel] ',vel.shape)
     vel[..., 0] = karman_vel
 
     dist = obs_func(samples)
@@ -104,6 +104,7 @@ def _smoothstep_tanh(x, xm, e):
         y = torch.abs(x-xm)
         return ((torch.exp(y) - torch.exp(-y))/(torch.exp(y) + torch.exp(-y))) * ((np.exp(e) + np.exp(-e))/(np.exp(e) - np.exp(-e)))
 
+# 仅圆柱，没有墙
 def circle_obstable_functions(center, radius):
     def sdf_func(samples):
         d = torch.sqrt((samples[..., 0] - center[0]) ** 2 + (samples[..., 1] - center[1]) ** 2) - radius

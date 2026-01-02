@@ -8,6 +8,7 @@ from functools import partial
 from utils.vis_utils import draw_scalar_field2D, save_figure, frames2gif
 from scipy.ndimage import map_coordinates
 import sys
+from utils.prms import *
 
 # Read obj with lines
 def read_obj(filename, d2=True):
@@ -80,7 +81,10 @@ if cfg.src == 'jpipe':
     cfg.scene_size = get_scene_size('./jpipe.obj')
 elif cfg.src == 'taylorgreen':
     cfg.scene_size = get_scene_size('./square.obj')
+elif cfg.src == 'liddriven':
+    cfg.scene_size = get_scene_size('./square.obj')
 
+    
 print(cfg.scene_size)
 
 # create network and training agent
@@ -117,6 +121,9 @@ for t in tqdm(range(cfg.n_timesteps)):
     try:
         fluid.load_ckpt(t)
         with torch.no_grad():
+            if(bCoordTranslation):
+                grid_coords_torch = grid_coords_torch + torch.Tensor([translationX, translationY]).cuda()
+
             grid_vel = fluid.velocity_field(grid_coords_torch).detach().cpu().numpy()
 
         i_back = grid_coords[..., 0] - dt * grid_vel[..., 0]

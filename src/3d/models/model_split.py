@@ -8,6 +8,9 @@ from .networks import get_network
 from utils.diff_ops import curl2d_fdiff, laplace, divergence, jacobian, gradient, curl2d
 from utils.model_utils import sample_uniform_2D, sample_random_2D
 from utils.vis_utils import draw_scalar_field2D, draw_vector_field2D, save_figure, save_figure_nopadding
+
+import sys
+sys.path.append("/w/nmc/Neural-Monte-Carlo-Fluid-Simulation/bindings/zombie3d/build/")
 import zombie_bindings
 import json
 import matplotlib.pyplot as plt

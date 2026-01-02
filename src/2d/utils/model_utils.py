@@ -1,6 +1,7 @@
 import torch
 
 def sample_uniform_2D(resolution: int, normalize=True, with_boundary=False, size=None, device='cpu'):
+    assert(normalize)
     if (size[1] - size[0]) > (size[3] - size[2]):
         res_x, res_y = resolution, int(resolution * (size[3] - size[2]) / (size[1] - size[0]))
     else:
@@ -20,6 +21,7 @@ def sample_uniform_2D(resolution: int, normalize=True, with_boundary=False, size
     return coords
 
 def sample_random_2D(N: int, normalize=True, size=None, device='cpu', epsilon=1e-1, obs_v=None):
+    assert(normalize)
     coords = torch.rand(N, 2, device=device)
     if normalize:
         coords[..., 0] = coords[..., 0] * (size[1] - size[0]) + size[0]

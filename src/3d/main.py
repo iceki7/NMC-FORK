@@ -37,6 +37,7 @@ torch.cuda.manual_seed_all(seed)
 #     return np.array(v), np.array(l)
 
 def get_scene_size(filename):
+    print(filename)
     v, f = gpytoolbox.read_mesh(filename)
     min_x = np.min(v[:, 0])
     max_x = np.max(v[:, 0])
@@ -66,6 +67,37 @@ def get_scene_size(filename):
     return scene_size
 
 
+def get_scene_size_zxc(filename):
+
+    vertices = []
+
+    with open(filename, "r") as f:
+        for line in f:
+            if line.startswith("v "):  # 只读取顶点
+                parts = line.strip().split()
+                vertices.append([float(parts[1]),
+                                float(parts[2]),
+                                float(parts[3])])
+
+    v = np.array(vertices)
+    min_x = v[:, 0].min()
+    max_x = v[:, 0].max()
+    min_y = v[:, 1].min()
+    max_y = v[:, 1].max()
+    min_z = v[:, 2].min()
+    max_z = v[:, 2].max()
+
+    print(min_x)
+    print(max_x)
+    print(min_y)
+    print(max_y)
+    print(min_z)
+    print(max_z)
+    scene_size = [min_x, max_x, min_y, max_y, min_z, max_z]
+    
+    return scene_size
+
+
 # create experiment config containing all hyperparameters
 cfg = Config()
 
@@ -83,7 +115,7 @@ f = open(cfg.wost_json)
 wost_data = json.load(f)
 f.close()
 
-cfg.scene_size = get_scene_size(wost_data["scene"]["boundary"])
+cfg.scene_size = get_scene_size_zxc(wost_data["scene"]["boundary"])
 
 print("bbox: ", cfg.scene_size)
 

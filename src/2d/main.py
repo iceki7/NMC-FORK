@@ -15,6 +15,8 @@ import random
 torch.cuda.empty_cache()
 
 seed=1234
+# 在上述import的模块里，从未调用过rand方法，所以这里的设置种子在所有的调用之前
+# 但是调用过uniform_方法
 random.seed(seed)
 np.random.seed(seed)
 torch.manual_seed(seed)
@@ -52,6 +54,7 @@ def get_scene_size(filename):
 
     # scene_size = [max_x - min_x, max_y - min_y]
     scene_size = [min_x, max_x, min_y, max_y]
+    print('[scene size]\t', scene_size)
     obstacle_lines = []
     for i in range(l.shape[0]):
         if np.all(v[l[i, 0]] == v[l[i, 1]]):
@@ -129,6 +132,8 @@ else:
         source_func = partial(source_func, karman_vel=cfg.karman_vel, obs_func=sign_func, scene_size=cfg.scene_size, eps=cfg.bdry_eps)
     if cfg.src == 'taylorgreen':
         source_func = partial(source_func, scene_size=cfg.scene_size)
+    if cfg.src == 'liddriven':
+        source_func = partial(source_func, scene_size=cfg.scene_size)
     if cfg.src == 'jpipe':
         source_func = partial(source_func, karman_vel=cfg.karman_vel, obs_func=sign_func, eps=cfg.bdry_eps)
     fluid.add_source('velocity', source_func, is_init=True)
@@ -178,6 +183,8 @@ for t in range(cfg.n_timesteps):
     #     cfg.max_n_iters = 3000
 
     fluid.timestep += 1
+
+    # default is 1
     if t > 0 and t < cfg.src_duration:
         fluid.add_source('velocity', source_func, is_init=False)
 
