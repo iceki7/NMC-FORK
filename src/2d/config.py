@@ -3,7 +3,7 @@ import argparse
 import json
 import shutil
 from utils.file_utils import ensure_dirs
-
+from utils.prms import *
 
 class Config(object):
     """Base class of Config, provide necessary hyperparameters. 
@@ -19,6 +19,18 @@ class Config(object):
         for k, v in args.__dict__.items():
             print("{0:20}".format(k), v)
             self.__setattr__(k, v)
+
+
+        if(("transXY" in self.exp_name)):
+            assert(bCoordTranslation)
+        elif (("zxctemp" in self.exp_name)):
+            pass
+        elif("outBC"in self.exp_name):
+            assert(bOutBC)
+        else:
+            assert(not bCoordTranslation)
+            assert(not bOutBC)
+
 
         # experiment paths
         self.exp_dir = os.path.join(self.proj_dir, self.exp_name)

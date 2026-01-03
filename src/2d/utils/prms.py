@@ -12,3 +12,5 @@ biggestField=[-1.1,  1.9,  -0.59,  0.6]  +  [translationX, translationX, transla
 assert(not(bCoordTranslation and bFitField))
 
 
+bOutBC = False
+
