@@ -5,12 +5,68 @@ import numpy as np
 from matplotlib import pyplot as plt
 from matplotlib.colors import Normalize
 from tqdm import tqdm
+import os
 
-veldir = r"C:\Users\123\Desktop\TEMP\\"
-NX = 18
 VMIN = 0.0
 VMAX = 0.7
 
+
+def drawU(
+    x, y, u, 
+    index: int,
+    txtpath,
+    dpi=300,
+    cmap="viridis",
+    fname="u_component"
+):
+    """
+
+    Parameters
+    ----------
+    x, y : 2D ndarray
+        网格坐标
+    u, v : 2D ndarray
+        矢量场分量
+    index : int
+        文件编号
+    txtpath : str
+        输出目录
+    dpi : int
+        保存图片的 DPI
+    cmap : str
+        颜色映射
+    """
+    # os.makedirs(txtpath, exist_ok=True)
+
+    # extent 用于保证坐标轴和 quiver 一致
+    extent = [x.min(), x.max(), y.min(), y.max()]
+
+    # ===== u 分量 =====
+    fig, ax = plt.subplots(figsize=(6, 5))
+    im = ax.imshow(
+        u,
+        origin="lower",
+        extent=extent,
+        cmap=cmap,
+        aspect="equal",
+        vmin=VMIN,
+        vmax=VMAX
+    )
+    cbar = plt.colorbar(im, ax=ax)
+    cbar.set_label("u value")
+
+    ax.set_title(fname + f"(index={index})")
+    ax.set_xlabel("x")
+    ax.set_ylabel("y")
+    print('[save u comp to dir]' + str(txtpath))
+
+    plt.tight_layout()
+    plt.savefig(
+        os.path.join(os.path.dirname(txtpath), fname+f"_{index:04d}.png"),
+        dpi=dpi
+    )
+    print('[save u comp]')
+    plt.close(fig)
 
 
 def draw_stream(x,y,myu,myv,tempcnt,sampleRate=1):
@@ -93,7 +149,20 @@ def draw_stream(x,y,myu,myv,tempcnt,sampleRate=1):
     plt.title('Velocity Streamplot')
     plt.colorbar(label='Speed')
     plt.tight_layout()
-    plt.savefig(veldir+"\zxcstream\zxc--"+str(tempcnt)+".png", bbox_inches='tight',dpi=300)
+    plt.savefig(veldir+r"\zxcstream\zxc--"+str(tempcnt)+".png", bbox_inches='tight',dpi=300)
+
+
+bDrawUv=1
+bDrawStream=0
+bTranslateXY=0
+
+veldir = r"C:\Users\123\Desktop\TEMP\\"
+
+NX = 81
+NX = 62
+
+
+
 
 
 
@@ -106,6 +175,7 @@ for i in tqdm(range(120,125)):
         values_v =  np.loadtxt(veldir + r"velocity_values_t{0:03}.txt".format(i))
 
     except:
+        print('error at '+str(i))
         break
     
     print(values_v.shape)
@@ -119,7 +189,30 @@ for i in tqdm(range(120,125)):
     myu = values_v[:,:,0]
     myv = values_v[:,:,1]
 
-    draw_stream(x,y,myu,myv,i)
+
+    
+
+    if(bDrawStream):
+        draw_stream(x,y,myu,myv,i)
+    if(bDrawUv):
+        if(bTranslateXY):
+            x = x + 1.5
+            y = y + 0.7
+        drawU(
+            x=x,
+            y=y,
+            u=myu,
+            index=i,
+            txtpath=veldir + r"velocity_values_t{0:03}.txt".format(i),
+        )
+        drawU(
+            x=x,
+            y=y,
+            u=myv,
+            index=i,
+            txtpath=veldir + r"velocity_values_t{0:03}.txt".format(i),
+            fname="v_component"
+        )
     plt.close()
 
 print("Done")
