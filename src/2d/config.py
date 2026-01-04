@@ -21,15 +21,21 @@ class Config(object):
             self.__setattr__(k, v)
 
 
-        if(("transXY" in self.exp_name)):
-            assert(bCoordTranslation)
-        elif (("zxctemp" in self.exp_name)):
+      
+        if (("zxctemp" in self.exp_name)):
             pass
-        elif("outBC"in self.exp_name):
-            assert(bOutBC)
+
         else:
-            assert(not bCoordTranslation)
-            assert(not bOutBC)
+            if(("transXY" in self.exp_name)):
+                assert(bCoordTranslation)
+            else:
+                assert(not bCoordTranslation)
+            
+            if("outBC"in self.exp_name):
+                assert(bOutBC)
+            else:
+                assert(not bOutBC)
+     
 
 
         # experiment paths
